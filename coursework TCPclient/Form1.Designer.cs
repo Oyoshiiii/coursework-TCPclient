@@ -32,6 +32,8 @@
             ContinueButton = new Button();
             textLines = new RichTextBox();
             visual = new PictureBox();
+            NextReplika = new Button();
+            AnswersList = new ListBox();
             ((System.ComponentModel.ISupportInitialize)visual).BeginInit();
             SuspendLayout();
             // 
@@ -61,7 +63,7 @@
             // 
             textLines.Location = new Point(22, 286);
             textLines.Name = "textLines";
-            textLines.Size = new Size(752, 144);
+            textLines.Size = new Size(456, 144);
             textLines.TabIndex = 2;
             textLines.Text = "";
             textLines.Visible = false;
@@ -75,12 +77,35 @@
             visual.TabStop = false;
             visual.Visible = false;
             // 
+            // NextReplika
+            // 
+            NextReplika.Location = new Point(709, 320);
+            NextReplika.Name = "NextReplika";
+            NextReplika.Size = new Size(79, 83);
+            NextReplika.TabIndex = 4;
+            NextReplika.Text = "->";
+            NextReplika.UseVisualStyleBackColor = true;
+            NextReplika.Visible = false;
+            NextReplika.Click += NextReplika_Click;
+            // 
+            // AnswersList
+            // 
+            AnswersList.FormattingEnabled = true;
+            AnswersList.ItemHeight = 25;
+            AnswersList.Location = new Point(484, 286);
+            AnswersList.Name = "AnswersList";
+            AnswersList.Size = new Size(219, 154);
+            AnswersList.TabIndex = 5;
+            AnswersList.Visible = false;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveBorder;
             ClientSize = new Size(800, 450);
+            Controls.Add(AnswersList);
+            Controls.Add(NextReplika);
             Controls.Add(visual);
             Controls.Add(textLines);
             Controls.Add(ContinueButton);
@@ -97,5 +122,7 @@
         private Button ContinueButton;
         private RichTextBox textLines;
         private PictureBox visual;
+        private Button NextReplika;
+        private ListBox AnswersList;
     }
 }

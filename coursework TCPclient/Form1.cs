@@ -8,7 +8,7 @@ namespace coursework_TCPclient
         string ip = "127.0.0.1";
         int port = 8888;
         bool Cancle = false;
-        
+
         TcpClient player = new TcpClient();
         StreamReader? Reader = null;
         StreamWriter? Writer = null;
@@ -27,28 +27,41 @@ namespace coursework_TCPclient
         }
         private async void NewGameButton_Click(object sender, EventArgs e)
         {
+            NewGameButton.Hide();
+            ContinueButton.Hide();
+
+            visual.Visible = true;
+            textLines.Visible = true;
+            AnswersList.Visible = true;
+            NextReplika.Visible = true;
+            
             AutosaveCode = 0;
             await TcpPlayer();
-            /*
-             вызывается метод TCPclient и устанавливается соединение с сервером
-            на сервер отправляется сообщение 0 и сервер очищает список автосохранений, устанавливая текущий код
-            автосохранения 0, 
-            далее вызывается из бибилотеки GameLibrary статический метод класса GameLine
-            после закрытия программы, на сервер отправляется сообщение 
-             */
+            MessageBox.Show("Начата новая игра, все предыдущие автосохранения, если они были, стерты", "Новая игра",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void ContinueButton_Click(object sender, EventArgs e)
+        private async Task ContinueButton_Click(object sender, EventArgs e)
         {
-            /*
-             вызывается метод TCPclient и устанавливается соединение с сервером
-            на сервер отправляется сообщение '-1'
-            если список автосохранений пуст, то сервер возвращает сообщение 'noautosaves' и приложение высвечивает
-            messageBox с сообщением о том, что нет последних автосохранений
-            если список автосохранений не пуст, сервер возвращает код последнего автосохранения, который заносится в переменную
-            AutosaveCode
-            далее вызывается из бибилотеки GameLibrary статический метод класса GameLine
-             */
+            AutosaveCode = -1;
+            await TcpPlayer();
+
+            if (AutosaveCode == 0)
+            {
+                MessageBox.Show("У вас нет последних автосохранений", "Ошибка загрузки", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                ContinueButton.Enabled = false;
+            }
+
+            else
+            {
+                NewGameButton.Hide();
+                ContinueButton.Hide();
+
+                visual.Visible = true;
+                textLines.Visible = true;
+                AnswersList.Visible = true;
+                NextReplika.Visible = true;
+            }
         }
 
         private async Task TcpPlayer()
@@ -65,7 +78,7 @@ namespace coursework_TCPclient
                 Task.Run(() => ReceiveServerMessageAsync(Reader));
                 await SendServerMessageAsync(Writer);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -87,14 +100,28 @@ namespace coursework_TCPclient
 
         private async Task ReceiveServerMessageAsync(StreamReader reader)
         {
-            while(true)
+            while (true)
             {
                 try
                 {
+                    int code = AutosaveCode;
                     AutosaveCode = Convert.ToInt32(await reader.ReadLineAsync());
+                    if (AutosaveCode !=  code)
+                    {
+                        break;
+                    }
+                    while (true)
+                    {
+                        AutosaveCode = Convert.ToInt32(await reader.ReadLineAsync());
+                    }
                 }
                 catch { break; }
             }
+        }
+
+        private void NextReplika_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
