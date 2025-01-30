@@ -1,5 +1,6 @@
-using CourseworkGameLib;
+п»їusing CourseworkGameLib;
 using System.Net.Sockets;
+using System.Reflection.Metadata;
 namespace coursework_TCPclient
 {
     public partial class Form1 : Form
@@ -8,7 +9,8 @@ namespace coursework_TCPclient
         string ip = "127.0.0.1";
         int port = 8888;
         bool Cancle = false;
-        bool next = false;
+        int playerAnswerCode = 0;
+        int plotCode = 0;
 
         TcpClient player = new TcpClient();
         StreamReader? Reader = null;
@@ -19,17 +21,17 @@ namespace coursework_TCPclient
         };
         List<string> plot = new List<string>()
         {
-            "*|\tПоздравляю, сегодня уже второй рабочий день на твоей новой работе",
-            "*|\tНа улице пасмурно, иногда покрапывает дождь...",
-            "*|\tНу ладно, похоже кто-то пришёл, желаю удачи",
-            "*|\tГотова?",
-            "*|\tОтлично"
+            "*|\tРџРѕР·РґСЂР°РІР»СЏСЋ, СЃРµРіРѕРґРЅСЏ СѓР¶Рµ РІС‚РѕСЂРѕР№ СЂР°Р±РѕС‡РёР№ РґРµРЅСЊ РЅР° С‚РІРѕРµР№ РЅРѕРІРѕР№ СЂР°Р±РѕС‚Рµ",
+            "*|\tРќР° СѓР»РёС†Рµ РїР°СЃРјСѓСЂРЅРѕ, РёРЅРѕРіРґР° РїРѕРєСЂР°РїС‹РІР°РµС‚ РґРѕР¶РґСЊ...",
+            "*|\tРќСѓ Р»Р°РґРЅРѕ, РїРѕС…РѕР¶Рµ РєС‚Рѕ-С‚Рѕ РїСЂРёС€С‘Р», Р¶РµР»Р°СЋ СѓРґР°С‡Рё",
+            "*|\tР“РѕС‚РѕРІР°?",
+            "*|\tРћС‚Р»РёС‡РЅРѕ"
         };
 
         List<string> playerAnswers = new List<string>()
         {
-            "Да",
-            "Нет"
+            "Р”Р°",
+            "РќРµС‚"
         };
 
         public Form1()
@@ -40,7 +42,7 @@ namespace coursework_TCPclient
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var msg = MessageBox.Show("Вы точно хотите выйти из игры?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var msg = MessageBox.Show("Р’С‹ С‚РѕС‡РЅРѕ С…РѕС‚РёС‚Рµ РІС‹Р№С‚Рё РёР· РёРіСЂС‹?", "Р’С‹С…РѕРґ", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (msg == DialogResult.Yes) { Cancle = true; e.Cancel = true; }
             else { Cancle = false; }
         }
@@ -48,7 +50,7 @@ namespace coursework_TCPclient
         {
             AutosaveCode = 0;
             await TcpPlayer();
-            MessageBox.Show("Начата новая игра, все предыдущие автосохранения, если они были, стерты", "Новая игра",
+            MessageBox.Show("РќР°С‡Р°С‚Р° РЅРѕРІР°СЏ РёРіСЂР°, РІСЃРµ РїСЂРµРґС‹РґСѓС‰РёРµ Р°РІС‚РѕСЃРѕС…СЂР°РЅРµРЅРёСЏ, РµСЃР»Рё РѕРЅРё Р±С‹Р»Рё, СЃС‚РµСЂС‚С‹", "РќРѕРІР°СЏ РёРіСЂР°",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             NewGameButton.Hide();
@@ -70,7 +72,7 @@ namespace coursework_TCPclient
 
             if (AutosaveCode == 0)
             {
-                MessageBox.Show("У вас нет последних автосохранений", "Ошибка загрузки", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("РЈ РІР°СЃ РЅРµС‚ РїРѕСЃР»РµРґРЅРёС… Р°РІС‚РѕСЃРѕС…СЂР°РЅРµРЅРёР№", "РћС€РёР±РєР° Р·Р°РіСЂСѓР·РєРё", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ContinueButton.Enabled = false;
             }
 
@@ -103,7 +105,7 @@ namespace coursework_TCPclient
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "РћС€РёР±РєР°", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             Writer?.Close();
             Reader?.Close();
@@ -144,12 +146,27 @@ namespace coursework_TCPclient
 
         private void NextReplika_Click(object sender, EventArgs e)
         {
-
+            Game();
         }
 
         private void Game()
         {
+            if (AutosaveCode == 0 && plotCode < 5)
+            {
+                if (plotCode == 3)
+                {
+                    textLines.Text = plot[plotCode];
+                    NextReplika.Enabled = false;
+                    AnswersList.Items.Add(playerAnswers[0]);
 
+                    
+                }
+                else
+                {
+                    textLines.Text = plot[plotCode];
+                }
+                plotCode++;
+            }
         }
     }
 }
