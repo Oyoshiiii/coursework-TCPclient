@@ -34,6 +34,8 @@
             visual = new PictureBox();
             NextReplika = new Button();
             AnswersList = new ListBox();
+            Coctails = new ListBox();
+            label1 = new Label();
             ((System.ComponentModel.ISupportInitialize)visual).BeginInit();
             SuspendLayout();
             // 
@@ -63,16 +65,16 @@
             // 
             textLines.Location = new Point(22, 286);
             textLines.Name = "textLines";
-            textLines.Size = new Size(456, 144);
+            textLines.Size = new Size(423, 144);
             textLines.TabIndex = 2;
             textLines.Text = "";
             textLines.Visible = false;
             // 
             // visual
             // 
-            visual.Location = new Point(22, 12);
+            visual.Location = new Point(215, 12);
             visual.Name = "visual";
-            visual.Size = new Size(752, 266);
+            visual.Size = new Size(559, 266);
             visual.TabIndex = 3;
             visual.TabStop = false;
             visual.Visible = false;
@@ -92,11 +94,30 @@
             // 
             AnswersList.FormattingEnabled = true;
             AnswersList.ItemHeight = 25;
-            AnswersList.Location = new Point(484, 286);
+            AnswersList.Location = new Point(451, 286);
             AnswersList.Name = "AnswersList";
-            AnswersList.Size = new Size(219, 154);
+            AnswersList.Size = new Size(252, 154);
             AnswersList.TabIndex = 5;
             AnswersList.Visible = false;
+            // 
+            // Coctails
+            // 
+            Coctails.FormattingEnabled = true;
+            Coctails.ItemHeight = 25;
+            Coctails.Location = new Point(22, 37);
+            Coctails.Name = "Coctails";
+            Coctails.Size = new Size(180, 229);
+            Coctails.TabIndex = 6;
+            Coctails.Visible = false;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(22, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(59, 25);
+            label1.TabIndex = 7;
+            label1.Text = "Меню напитков бара";
             // 
             // Form1
             // 
@@ -104,6 +125,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveBorder;
             ClientSize = new Size(800, 450);
+            Controls.Add(label1);
+            Controls.Add(Coctails);
             Controls.Add(AnswersList);
             Controls.Add(NextReplika);
             Controls.Add(visual);
@@ -114,6 +137,7 @@
             Text = "MainWindow";
             ((System.ComponentModel.ISupportInitialize)visual).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -124,5 +148,7 @@
         private PictureBox visual;
         private Button NextReplika;
         private ListBox AnswersList;
+        private ListBox Coctails;
+        private Label label1;
     }
 }

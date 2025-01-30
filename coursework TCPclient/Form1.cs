@@ -8,10 +8,29 @@ namespace coursework_TCPclient
         string ip = "127.0.0.1";
         int port = 8888;
         bool Cancle = false;
+        bool next = false;
 
         TcpClient player = new TcpClient();
         StreamReader? Reader = null;
         StreamWriter? Writer = null;
+        List<Image> images = new List<Image>()
+        {
+
+        };
+        List<string> plot = new List<string>()
+        {
+            "*|\tПоздравляю, сегодня уже второй рабочий день на твоей новой работе",
+            "*|\tНа улице пасмурно, иногда покрапывает дождь...",
+            "*|\tНу ладно, похоже кто-то пришёл, желаю удачи",
+            "*|\tГотова?",
+            "*|\tОтлично"
+        };
+
+        List<string> playerAnswers = new List<string>()
+        {
+            "Да",
+            "Нет"
+        };
 
         public Form1()
         {
@@ -27,6 +46,11 @@ namespace coursework_TCPclient
         }
         private async void NewGameButton_Click(object sender, EventArgs e)
         {
+            AutosaveCode = 0;
+            await TcpPlayer();
+            MessageBox.Show("Начата новая игра, все предыдущие автосохранения, если они были, стерты", "Новая игра",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             NewGameButton.Hide();
             ContinueButton.Hide();
 
@@ -34,21 +58,19 @@ namespace coursework_TCPclient
             textLines.Visible = true;
             AnswersList.Visible = true;
             NextReplika.Visible = true;
-            
-            AutosaveCode = 0;
-            await TcpPlayer();
-            MessageBox.Show("Начата новая игра, все предыдущие автосохранения, если они были, стерты", "Новая игра",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+            Coctails.Visible = true;
+
+            textLines.Text = plot[0];
         }
 
-        private async Task ContinueButton_Click(object sender, EventArgs e)
+        private async void ContinueButton_Click(object sender, EventArgs e)
         {
             AutosaveCode = -1;
             await TcpPlayer();
 
             if (AutosaveCode == 0)
             {
-                MessageBox.Show("У вас нет последних автосохранений", "Ошибка загрузки", MessageBoxButtons.OK, MessageBoxIcon.Error); 
+                MessageBox.Show("У вас нет последних автосохранений", "Ошибка загрузки", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ContinueButton.Enabled = false;
             }
 
@@ -61,6 +83,7 @@ namespace coursework_TCPclient
                 textLines.Visible = true;
                 AnswersList.Visible = true;
                 NextReplika.Visible = true;
+                Coctails.Visible = true;
             }
         }
 
@@ -106,7 +129,7 @@ namespace coursework_TCPclient
                 {
                     int code = AutosaveCode;
                     AutosaveCode = Convert.ToInt32(await reader.ReadLineAsync());
-                    if (AutosaveCode !=  code)
+                    if (AutosaveCode != code)
                     {
                         break;
                     }
@@ -120,6 +143,11 @@ namespace coursework_TCPclient
         }
 
         private void NextReplika_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Game()
         {
 
         }
