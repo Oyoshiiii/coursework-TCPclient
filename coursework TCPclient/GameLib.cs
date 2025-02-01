@@ -168,33 +168,22 @@
 
     public class GameLine
     {
-        private static int code;
-        private static int Code { get { return code; } set { code = value; } }
-        private static List<int> Codes;
-        public GameLine(int autosaveCode) { Code = autosaveCode;  Codes = new List<int> (); }
-        public static List<string> MainGameLine(int autosaveCode)
+        public static string MainGameLine(int autosaveCode)
         {
-            Code = autosaveCode;
             string dialog = "";
             Lilith lilith = new Lilith();
             Peter peter = new Peter();
 
-            if (Code == 0)
+            if (autosaveCode > 15)
             {
-                Codes.Clear();
-            }
-
-            Codes.Add(Code);
-            if (Code > 15)
-            {
-                dialog = peter.StoryLines(Code);
+                dialog = peter.StoryLines(autosaveCode - 16);
             }
             else
             {
-                dialog = lilith.StoryLines(Code);
+                dialog = lilith.StoryLines(autosaveCode - 1);
             }
 
-            return new List<string> { Code.ToString(),  dialog };
+            return dialog; 
         }
     }
 }

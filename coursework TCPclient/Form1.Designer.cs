@@ -99,6 +99,8 @@
             AnswersList.Size = new Size(252, 154);
             AnswersList.TabIndex = 5;
             AnswersList.Visible = false;
+
+            AnswersList.SelectedIndexChanged += AnswersList_SelectedIndexChanged;
             // 
             // Coctails
             // 
@@ -126,6 +128,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveBorder;
             ClientSize = new Size(800, 450);
+            FormClosing += Form1_FormClosing;
             Controls.Add(menuText);
             Controls.Add(Coctails);
             Controls.Add(AnswersList);

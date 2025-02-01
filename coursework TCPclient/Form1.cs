@@ -10,13 +10,9 @@ namespace coursework_TCPclient
         int AutosaveCode = 0;
         string ip = "127.0.0.1";
         int port = 8888;
-        bool Cancle = false;
-        int playerAnswerCode = 0;
         int plotCode = 0;
 
         TcpClient player = new TcpClient();
-        StreamReader? Reader = null;
-        StreamWriter? Writer = null;
         List<Image> images = new List<Image>()
         {
 
@@ -27,21 +23,24 @@ namespace coursework_TCPclient
             "*|  На улице пасмурно, иногда покрапывает дождь...",
             "*|  Ну ладно, похоже кто-то пришёл, желаю удачи",
             "*|  Готова?",
-            "*|  Отлично"
+            "*|  Отлично",
+            "* к барной стойке подошла высокая девушка, закрывающая попутно свой зонтик *"
         };
 
         List<string> playerAnswers = new List<string>()
         {
             "Да",
             "Нет",
-            ""
+            "А как обычно - это как?..",
+            "Конечно, как\n" +
+            "обычно, каждый \n" +
+            "день такое готовлю"
         };
 
         public Form1()
         {
             InitializeComponent();
             AutosaveCode = 1;
-            FormClosing += Form1_FormClosing;
         }
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -62,8 +61,9 @@ namespace coursework_TCPclient
                 {
                     MessageBox.Show("Ошибка при закрытии: " + ex.Message);
                 }
+
             }
-            else { Cancle = false; e.Cancel = false; }
+            else { e.Cancel = true; }
         }
         private void NewGameButton_Click(object sender, EventArgs e)
         {
@@ -130,6 +130,8 @@ namespace coursework_TCPclient
                         AnswersList.Visible = true;
                         NextReplika.Visible = true;
                         Coctails.Visible = true;
+
+                        textLines.Text = "Нажми на кнопку ->";
                     }
                 }
 
@@ -144,38 +146,76 @@ namespace coursework_TCPclient
         private void NextReplika_Click(object sender, EventArgs e)
         {
             if (AutosaveCode == 0) { StartGame(); }
-            else { Game(); }
+            else
+            {
+                //Coctails.Items.Add
+                Game();
+            }
+        }
+
+        private void AnswersList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (AnswersList.SelectedIndex != -1)
+            {
+                NextReplika.Enabled = true;
+            }
         }
 
         private void StartGame()
         {
-            if (plotCode < 5)
+            if (plotCode < 6)
             {
                 textLines.Text = plot[plotCode];
                 textLines.Update();
+
+                AnswersList.Items.Clear();
+                AnswersList.Update();
+                AnswersList.EndUpdate();
 
                 if (plotCode == 3)
                 {
                     AnswersList.Items.Add(playerAnswers[0]);
                     AnswersList.Update();
+                    AnswersList.EndUpdate();
                     NextReplika.Enabled = false;
-
-                    var choice = AnswersList.SelectedItem;
-
-                    NextReplika.Enabled = true;
                 }
 
-                AnswersList.Items.Clear();
-                AnswersList.Update();
-
                 plotCode++;
+                if (plotCode == 4)
+                {
+                    AutosaveCode = 1;
+                }
             }
-            else AutosaveCode = 1;
         }
 
         private void Game()
         {
+            AnswersList.Items.Clear();
+            AnswersList.Update();
+            AnswersList.EndUpdate();
 
+            switch (AutosaveCode)
+            {
+                case 1:
+                    //картинка игры меняется на картинку с лилит
+                    break;
+                case 17:
+                    //картинка игры меняется на картинку с питером
+                    break;
+            }
+
+            textLines.Text = GameLine.MainGameLine(AutosaveCode);
+
+            switch (AutosaveCode)
+            {
+                case 1:
+                    AnswersList.Items.Add(playerAnswers[2]);
+                    AnswersList.Items.Add(playerAnswers[3]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+                    NextReplika.Enabled = false;
+                    break;
+            }
         }
     }
 }
