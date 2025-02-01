@@ -73,21 +73,7 @@ namespace coursework_TCPclient
         private void ContinueButton_Click(object sender, EventArgs e)
         {
             AutosaveCode = -1;
-
-            if (AutosaveCode != 0)
-            {
-                NewGameButton.Hide();
-                ContinueButton.Hide();
-
-                menuText.Visible = true;
-                visual.Visible = true;
-                textLines.Visible = true;
-                AnswersList.Visible = true;
-                NextReplika.Visible = true;
-                Coctails.Visible = true;
-
-                SendCodeToServerAsync();
-            }
+            SendCodeToServerAsync();
         }
         
         private void SendCodeToServerAsync()
