@@ -33,7 +33,8 @@ namespace coursework_TCPclient
         List<string> playerAnswers = new List<string>()
         {
             "Да",
-            "Нет"
+            "Нет",
+            ""
         };
 
         public Form1()
@@ -101,7 +102,7 @@ namespace coursework_TCPclient
                     NextReplika.Visible = true;
                     Coctails.Visible = true;
 
-                    textLines.Text = plot[0];
+                    textLines.Text = "Нажми на кнопку ->";
                 }
 
                 else
@@ -142,34 +143,39 @@ namespace coursework_TCPclient
         
         private void NextReplika_Click(object sender, EventArgs e)
         {
-            Game();
+            if (AutosaveCode == 0) { StartGame(); }
+            else { Game(); }
+        }
+
+        private void StartGame()
+        {
+            if (plotCode < 5)
+            {
+                textLines.Text = plot[plotCode];
+                textLines.Update();
+
+                if (plotCode == 3)
+                {
+                    AnswersList.Items.Add(playerAnswers[0]);
+                    AnswersList.Update();
+                    NextReplika.Enabled = false;
+
+                    var choice = AnswersList.SelectedItem;
+
+                    NextReplika.Enabled = true;
+                }
+
+                AnswersList.Items.Clear();
+                AnswersList.Update();
+
+                plotCode++;
+            }
+            else AutosaveCode = 1;
         }
 
         private void Game()
         {
-            if (AutosaveCode == 0 && plotCode < 5)
-            {
-                if (plotCode == 3)
-                {
-                    NextReplika.Enabled = false;
-                    AnswersList.Items.Add(playerAnswers[0]);
-                    AnswersList.EndUpdate();
 
-                    while (AnswersList.SelectedIndex != 0)
-                    {
-                        NextReplika.Enabled = false;
-                    }
-
-                    NextReplika.Enabled = true;
-                }
-                else
-                {
-                    textLines.Text = plot[plotCode];
-                }
-
-                textLines.Update();
-                plotCode++;
-            }
         }
     }
 }
