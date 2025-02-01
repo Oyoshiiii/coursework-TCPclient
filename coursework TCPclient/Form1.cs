@@ -2,6 +2,7 @@
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection.Metadata;
+using System.Text;
 namespace coursework_TCPclient
 {
     public partial class Form1 : Form
@@ -41,36 +42,37 @@ namespace coursework_TCPclient
             AutosaveCode = 1;
             FormClosing += Form1_FormClosing;
         }
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             var msg = MessageBox.Show("Вы точно хотите выйти из игры?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (msg == DialogResult.Yes) { Cancle = true; }
+            if (msg == DialogResult.Yes)
+            {
+                try
+                {
+                    TcpClient player = new TcpClient(ip, port);
+                    NetworkStream stream = player.GetStream();
+
+                    byte[] data = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
+                    stream.Write(data, 0, data.Length);
+
+                    player.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Ошибка при закрытии: " + ex.Message);
+                }
+            }
             else { Cancle = false; e.Cancel = false; }
         }
-        private async void NewGameButton_Click(object sender, EventArgs e)
+        private void NewGameButton_Click(object sender, EventArgs e)
         {
             AutosaveCode = 0;
-            await TcpPlayer();
-            MessageBox.Show("Начата новая игра, все предыдущие автосохранения, если они были, стерты", "Новая игра",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            NewGameButton.Hide();
-            ContinueButton.Hide();
-
-            menuText.Visible = true;
-            visual.Visible = true;
-            textLines.Visible = true;
-            AnswersList.Visible = true;
-            NextReplika.Visible = true;
-            Coctails.Visible = true;
-
-            textLines.Text = plot[0];
+            SendCodeToServerAsync();
         }
 
-        private async void ContinueButton_Click(object sender, EventArgs e)
+        private void ContinueButton_Click(object sender, EventArgs e)
         {
             AutosaveCode = -1;
-            await TcpPlayer();
 
             if (AutosaveCode != 0)
             {
@@ -83,69 +85,75 @@ namespace coursework_TCPclient
                 AnswersList.Visible = true;
                 NextReplika.Visible = true;
                 Coctails.Visible = true;
+
+                SendCodeToServerAsync();
             }
         }
-
-        private async Task TcpPlayer()
+        
+        private void SendCodeToServerAsync()
         {
             try
             {
-                player.Connect(ip, port);
+                TcpClient player = new TcpClient(ip, port);
+                NetworkStream stream = player.GetStream();
 
-                Reader = new StreamReader(player.GetStream());
-                Writer = new StreamWriter(player.GetStream());
-
-
-                Task.Run(() => ReceiveServerMessageAsync(Reader));
-                await SendServerMessageAsync(Writer);
-                //написать дополнительный метод отправки именно последнего кода, после отправки самого первого кода, tcpclient должен отключаться
-                //и в конце игры вновь подключаться, отправляя последний код и снова отключаться
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            Writer?.Close();
-            Reader?.Close();
-        }
-
-        private async Task SendServerMessageAsync(StreamWriter writer)
-        {
-            await writer.WriteLineAsync(AutosaveCode.ToString());
-            await writer.FlushAsync();
-
-            while (true)
-            {
-                if (Cancle == true)
+                byte[] code = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
+                stream.Write(code, 0, code.Length);
+                
+                if (AutosaveCode == 0)
                 {
-                    await writer.WriteLineAsync(AutosaveCode.ToString());
-                    await writer.FlushAsync();
-                    break;
+                    MessageBox.Show("Начата новая игра, все предыдущие автосохранения, если они были, стерты", "Новая игра",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    NewGameButton.Hide();
+                    ContinueButton.Hide();
+
+                    menuText.Visible = true;
+                    visual.Visible = true;
+                    textLines.Visible = true;
+                    AnswersList.Visible = true;
+                    NextReplika.Visible = true;
+                    Coctails.Visible = true;
+
+                    textLines.Text = plot[0];
                 }
-                else continue;
-            }
-        }
 
-        private async Task ReceiveServerMessageAsync(StreamReader reader)
-        {
-            while (true)
-            {
-                try
+                else
                 {
-                    int code = Convert.ToInt32(await reader.ReadLineAsync());
-                    MessageBox.Show($"{code}");
+                    byte[] data = new byte[256];
+                    int bytesRead = stream.Read(data, 0, data.Length);
+                    int lastCode = Convert.ToInt32(Encoding.UTF8.GetString(data, 0, bytesRead));
 
-                    if (code == 0 && AutosaveCode != 0)
+                    if (lastCode == 0)
                     {
                         MessageBox.Show("У вас нет последних автосохранений", "Ошибка загрузки",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                         ContinueButton.Enabled = false;
                     }
+
+                    else
+                    {
+                        AutosaveCode = lastCode;
+                        NewGameButton.Hide();
+                        ContinueButton.Hide();
+
+                        menuText.Visible = true;
+                        visual.Visible = true;
+                        textLines.Visible = true;
+                        AnswersList.Visible = true;
+                        NextReplika.Visible = true;
+                        Coctails.Visible = true;
+                    }
                 }
-                catch { break; }
+
+                player.Close();
+            }
+            catch(Exception ex) 
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
+        
         private void NextReplika_Click(object sender, EventArgs e)
         {
             Game();
