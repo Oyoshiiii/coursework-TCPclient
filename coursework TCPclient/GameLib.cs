@@ -7,15 +7,12 @@
         public List<string> Coctails;
         public List<string> Recipies;
         protected List<string> storyLines;
-        protected int coctailNum;
-        public int CoctailNum { get { return coctailNum; } set { coctailNum = value; } }
         public Character()
         {
             Name = "-";
             Coctails = new List<string>();
             Recipies = new List<string>();
             storyLines = new List<string>();
-            CoctailNum = 0;
         }
         public virtual string StoryLines(int line) { return "-"; }
     }
@@ -31,8 +28,6 @@
         public Lilith() 
         { 
             Name = "Lilith";
-            CoctailNum = 0;
-            CoctailGiftNum = 1;
             Coctails = new List<string> { "Розы в снегу", "Белая дымка" };
             Recipies = new List<string> 
             { 
@@ -54,7 +49,7 @@
                 //Заказ коктейля (описание 1) --- 4
                 "\tСтыдно признаться, но я настолько привыкла к тому, что прошлая барменша без каких-либо вопросов " +
                 "делала этот коктейль... что я уже и вовсе забыла название.. надеюсь, вы на меня не злитесь и не " +
-                "примите за глупую, ",
+                "примите за глупую",
 
                 //Заказ коктейля (описание 1 продолжение) --- 5
                 //Ответ 1 на -> Конечно нет, все хорошо, я готова буду принять ваш заказ и так
@@ -118,7 +113,6 @@
         public Peter()
         {
             Name = "Peter";
-            CoctailNum = 0;
             Coctails = new List<string> { "Табак и ваниль" };
             Recipies = new List<string> { "Ваниль, табачный сироп, сухой лед, перец" };
 

@@ -63,15 +63,17 @@
             // 
             // textLines
             // 
-            textLines.Location = new Point(22, 286);
+            textLines.BackColor = SystemColors.ScrollBar;
+            textLines.Location = new Point(22, 284);
             textLines.Name = "textLines";
-            textLines.Size = new Size(423, 144);
+            textLines.Size = new Size(681, 87);
             textLines.TabIndex = 2;
             textLines.Text = "";
             textLines.Visible = false;
             // 
             // visual
             // 
+            visual.BackColor = Color.IndianRed;
             visual.Location = new Point(215, 12);
             visual.Name = "visual";
             visual.Size = new Size(559, 266);
@@ -81,29 +83,32 @@
             // 
             // NextReplika
             // 
+            NextReplika.BackColor = Color.IndianRed;
             NextReplika.Location = new Point(709, 320);
             NextReplika.Name = "NextReplika";
             NextReplika.Size = new Size(79, 83);
             NextReplika.TabIndex = 4;
             NextReplika.Text = "->";
-            NextReplika.UseVisualStyleBackColor = true;
+            NextReplika.UseVisualStyleBackColor = false;
             NextReplika.Visible = false;
             NextReplika.Click += NextReplika_Click;
             // 
             // AnswersList
             // 
+            AnswersList.BackColor = Color.DarkGray;
             AnswersList.FormattingEnabled = true;
+            AnswersList.HorizontalScrollbar = true;
             AnswersList.ItemHeight = 25;
-            AnswersList.Location = new Point(451, 286);
+            AnswersList.Location = new Point(22, 377);
             AnswersList.Name = "AnswersList";
-            AnswersList.Size = new Size(252, 154);
+            AnswersList.Size = new Size(681, 54);
             AnswersList.TabIndex = 5;
             AnswersList.Visible = false;
-
             AnswersList.SelectedIndexChanged += AnswersList_SelectedIndexChanged;
             // 
             // Coctails
             // 
+            Coctails.BackColor = Color.Salmon;
             Coctails.FormattingEnabled = true;
             Coctails.ItemHeight = 25;
             Coctails.Location = new Point(22, 37);
@@ -111,6 +116,7 @@
             Coctails.Size = new Size(180, 229);
             Coctails.TabIndex = 6;
             Coctails.Visible = false;
+            Coctails.SelectedIndexChanged += Coctails_SelectedIndexChanged;
             // 
             // menuText
             // 
@@ -126,9 +132,8 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = SystemColors.ActiveBorder;
+            BackColor = Color.RosyBrown;
             ClientSize = new Size(800, 450);
-            FormClosing += Form1_FormClosing;
             Controls.Add(menuText);
             Controls.Add(Coctails);
             Controls.Add(AnswersList);
@@ -139,6 +144,7 @@
             Controls.Add(NewGameButton);
             Name = "Form1";
             Text = "MainWindow";
+            FormClosing += Form1_FormClosing;
             ((System.ComponentModel.ISupportInitialize)visual).EndInit();
             ResumeLayout(false);
             PerformLayout();

@@ -8,11 +8,19 @@ namespace coursework_TCPclient
     public partial class Form1 : Form
     {
         int AutosaveCode = 0;
+        bool recipie = false;
+        bool advice = true;
+
         string ip = "127.0.0.1";
         int port = 8888;
         int plotCode = 0;
 
-        TcpClient player = new TcpClient();
+        Lilith lilith = new Lilith();
+        Peter peter = new Peter();
+
+        List<string> coctails = null;
+        List<string> recipies = null;
+
         List<Image> images = new List<Image>()
         {
 
@@ -29,41 +37,77 @@ namespace coursework_TCPclient
 
         List<string> playerAnswers = new List<string>()
         {
+            //0 1
             "Да",
             "Нет",
+            //2 3
             "А как обычно - это как?..",
-            "Конечно, как\n" +
-            "обычно, каждый \n" +
-            "день такое готовлю"
+            "Конечно, как обычно, каждый день такое готовлю",
+            //4 5
+            "Ничего страшного",
+            "Ну, смешно однако...",
+            //6 7
+            "Хорошо, сейчас сделаем",
+            "Простите, не особо понимаю все равно..",
+            // 8
+            ""
         };
+
+
 
         public Form1()
         {
             InitializeComponent();
-            AutosaveCode = 1;
+            coctails = new List<string>()
+            {
+                lilith.Coctails[0],
+                "Кисельные грёзы",
+                peter.Coctails[0]
+            };
+            recipies = new List<string>()
+            {
+                lilith.Recipies[0],
+                "Альдегид, лаймовый сироп",
+                peter.Recipies[0]
+            };
         }
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var msg = MessageBox.Show("Вы точно хотите выйти из игры?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (msg == DialogResult.Yes)
+            if (Coctails.Enabled || AnswersList.SelectedIndex != -1)
             {
-                try
-                {
-                    TcpClient player = new TcpClient(ip, port);
-                    NetworkStream stream = player.GetStream();
-
-                    byte[] data = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
-                    stream.Write(data, 0, data.Length);
-
-                    player.Close();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Ошибка при закрытии: " + ex.Message);
-                }
-
+                MessageBox.Show("Сначала перейдите к следующей реплике", "Ошибка автосохранения", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                e.Cancel = true;
             }
-            else { e.Cancel = true; }
+            else
+            {
+                var msg = MessageBox.Show("Вы точно хотите выйти из игры?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (msg == DialogResult.Yes)
+                {
+                    try
+                    {
+                        TcpClient player = new TcpClient(ip, port);
+                        NetworkStream stream = player.GetStream();
+
+                        string sendCode = $"{AutosaveCode}";
+                        if (recipie)
+                        {
+                            sendCode += "00";
+                        }
+
+                        byte[] data = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
+                        stream.Write(data, 0, data.Length);
+
+                        player.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Ошибка при закрытии: " + ex.Message);
+                    }
+
+                }
+                else { e.Cancel = true; }
+            }
         }
         private void NewGameButton_Click(object sender, EventArgs e)
         {
@@ -76,7 +120,7 @@ namespace coursework_TCPclient
             AutosaveCode = -1;
             SendCodeToServerAsync();
         }
-        
+
         private void SendCodeToServerAsync()
         {
             try
@@ -86,7 +130,7 @@ namespace coursework_TCPclient
 
                 byte[] code = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
                 stream.Write(code, 0, code.Length);
-                
+
                 if (AutosaveCode == 0)
                 {
                     MessageBox.Show("Начата новая игра, все предыдущие автосохранения, если они были, стерты", "Новая игра",
@@ -101,6 +145,10 @@ namespace coursework_TCPclient
                     AnswersList.Visible = true;
                     NextReplika.Visible = true;
                     Coctails.Visible = true;
+
+                    MessageBox.Show("Данная игра создана по задумке игры Va 11 Hall-a\nВы играете от лица барменши, которая" +
+                        " только устроилась в бар", "Вступление", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Приятной вам игры!", "Вступление", MessageBoxButtons.OK);
 
                     textLines.Text = "Нажми на кнопку ->";
                 }
@@ -120,7 +168,10 @@ namespace coursework_TCPclient
 
                     else
                     {
+                        int HasGift = lastCode / 100;
+                        if (HasGift != 0) { recipie = true; lastCode /= 100; }
                         AutosaveCode = lastCode;
+
                         NewGameButton.Hide();
                         ContinueButton.Hide();
 
@@ -137,18 +188,18 @@ namespace coursework_TCPclient
 
                 player.Close();
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        
+
         private void NextReplika_Click(object sender, EventArgs e)
         {
             if (AutosaveCode == 0) { StartGame(); }
             else
             {
-                //Coctails.Items.Add
+                AnswersList.SelectedIndex = -1;
                 Game();
             }
         }
@@ -158,6 +209,54 @@ namespace coursework_TCPclient
             if (AnswersList.SelectedIndex != -1)
             {
                 NextReplika.Enabled = true;
+            }
+
+            if (AutosaveCode == -1 && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0) { AutosaveCode = 2; }
+                if (AnswersList.SelectedIndex == 1) { AutosaveCode = 3; }
+            }
+
+            if (AutosaveCode == -4 && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0) { AutosaveCode = 5; }
+                if (AnswersList.SelectedIndex == 1) { AutosaveCode = 6; }
+            }
+
+            if ((AutosaveCode == -5 || AutosaveCode == -6) && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0)
+                {
+                    Coctails.Enabled = true;
+                    NextReplika.Enabled = false;
+                    AutosaveCode = -5;
+                }
+                if (AnswersList.SelectedIndex == 1)
+                {
+                    Coctails.Enabled = false;
+                    NextReplika.Enabled = true;
+                    Coctails.SelectedIndex = -1;
+                    AutosaveCode = 7;
+                }
+            }
+
+            if (AutosaveCode == -7 && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0)
+                {
+                    Coctails.Enabled = true;
+                    NextReplika.Enabled = false;
+                    AutosaveCode = -7;
+                    advice = true;
+                }
+                if (AnswersList.SelectedIndex == 1)
+                {
+                    Coctails.Enabled = false;
+                    NextReplika.Enabled = true;
+                    Coctails.SelectedIndex = -1;
+                    AutosaveCode = 8;
+                    advice = false;
+                }
             }
         }
 
@@ -180,28 +279,78 @@ namespace coursework_TCPclient
                     NextReplika.Enabled = false;
                 }
 
-                plotCode++;
-                if (plotCode == 4)
+                if (plotCode == 5)
                 {
                     AutosaveCode = 1;
                 }
+                plotCode++;
+            }
+        }
+
+        private void Coctails_SelectedIndexChanged(Object sender, EventArgs e)
+        {
+            if (Coctails.Enabled)
+            {
+                if (Coctails.SelectedIndex == -1)
+                {
+                    NextReplika.Enabled = false;
+                }
+                else NextReplika.Enabled = true;
+            }
+            if (Coctails.SelectedIndex == 0)
+            {
+                MessageBox.Show(recipies[0], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (AutosaveCode < 17) { AutosaveCode = 9; }
+            }
+            if (Coctails.SelectedIndex == 1)
+            {
+                MessageBox.Show(recipies[1], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (AutosaveCode < 17) { AutosaveCode = 15; }
+            }
+            if (Coctails.SelectedIndex == 2)
+            {
+                MessageBox.Show(recipies[2], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (AutosaveCode < 17) { AutosaveCode = 15; }
+            }
+            if (Coctails.SelectedIndex == 3)
+            {
+                MessageBox.Show(recipies[3], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
         private void Game()
         {
+            Coctails.Enabled = false;
             AnswersList.Items.Clear();
             AnswersList.Update();
             AnswersList.EndUpdate();
 
-            switch (AutosaveCode)
+            Coctails.SelectedIndex = -1;
+            AnswersList.SelectedIndex = -1;
+
+            if (AutosaveCode < 17 && Coctails.Items.Count == 0)
             {
-                case 1:
-                    //картинка игры меняется на картинку с лилит
-                    break;
-                case 17:
-                    //картинка игры меняется на картинку с питером
-                    break;
+                if (recipie)
+                {
+                    coctails.Add(lilith.Coctails[1]);
+                    recipies.Add(lilith.Recipies[1]);
+                }
+                foreach (var coctail in coctails)
+                {
+                    Coctails.Items.Add(coctail);
+                    Coctails.Update();
+                }
+                Coctails.EndUpdate();
+            }
+
+            if (AutosaveCode < 17)
+            {
+                //картинка игры меняется на картинку с лилит
+            }
+            else
+            {
+                //картинка игры меняется на картинку с питером
+
             }
 
             textLines.Text = GameLine.MainGameLine(AutosaveCode);
@@ -213,7 +362,70 @@ namespace coursework_TCPclient
                     AnswersList.Items.Add(playerAnswers[3]);
                     AnswersList.Update();
                     AnswersList.EndUpdate();
+
+                    AutosaveCode = -1;
                     NextReplika.Enabled = false;
+                    break;
+                case 2:
+                    AutosaveCode = 4;
+                    break;
+                case 3:
+                    AutosaveCode = 4;
+                    break;
+                case 4:
+                    AnswersList.Items.Add(playerAnswers[4]);
+                    AnswersList.Items.Add(playerAnswers[5]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -4;
+                    NextReplika.Enabled = false;
+                    break;
+                case 5:
+                    AnswersList.Items.Add(playerAnswers[6]);
+                    AnswersList.Items.Add(playerAnswers[7]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -5;
+                    NextReplika.Enabled = false;
+                    break;
+                case 6:
+                    AnswersList.Items.Add(playerAnswers[6]);
+                    AnswersList.Items.Add(playerAnswers[7]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -6;
+                    NextReplika.Enabled = false;
+                    break;
+                case 7:
+                    AnswersList.Items.Add(playerAnswers[6]);
+                    AnswersList.Items.Add(playerAnswers[8]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -7;
+                    NextReplika.Enabled = false;
+                    break;
+                case 9:
+                    if (recipie)
+                    {
+                        AutosaveCode = 10;
+                    }
+                    break;
+                case 10:
+                    AutosaveCode = 11;
+                    Coctails.Items.Add(lilith.Coctails[1]);
+                    Coctails.Update();
+                    Coctails.EndUpdate();
+
+                    coctails.Add(lilith.Coctails[1]);
+                    recipies.Add(lilith.Recipies[1]);
+                    break;
+                case 11:
+                    AutosaveCode = 17;
+                    recipie = true;
                     break;
             }
         }
