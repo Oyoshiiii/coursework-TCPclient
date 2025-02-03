@@ -31,7 +31,10 @@ namespace coursework_TCPclient
             "*|  Ну ладно, похоже кто-то пришёл, желаю удачи",
             "*|  Готова?",
             "*|  Отлично",
-            "* к барной стойке подошла высокая девушка, закрывающая попутно свой зонтик *"
+            "* к барной стойке подошла высокая девушка, которая попутно закрывала свой зонтик *",
+            "* девушка ушла и вы смогли какое-то время побыть наедине с самой собой *",
+            "...",
+            "* спустя двадцать минут в бар зашел промокший от дождя парень, который был явно не в духе *"
         };
 
         List<string> playerAnswers = new List<string>()
@@ -50,6 +53,7 @@ namespace coursework_TCPclient
             "Простите, может вы еще вспомните пару деталей коктейля?",
             // 8
             "...может.. ещё детали вспомните?..."
+            
         };
 
 
@@ -156,7 +160,7 @@ namespace coursework_TCPclient
                     visual.Image = Image.FromFile(images[0]);
                     visual.Update();
 
-                    MessageBox.Show("Данная игра создана по задумке игры Va 11 Hall-a\nВы играете от лица барменши, которая" +
+                    MessageBox.Show("Данная игра создана по мотивам игры Va 11 Hall-a\nВы играете от лица барменши, которая" +
                         " только устроилась в бар", "Вступление", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     MessageBox.Show("Приятной вам игры!", "Вступление", MessageBoxButtons.OK);
 
@@ -207,14 +211,9 @@ namespace coursework_TCPclient
         private void NextReplika_Click(object sender, EventArgs e)
         {
             if (AutosaveCode == 0) { StartGame(); }
-            else if (AutosaveCode < 17)
-            {
-                GamePartLilith();
-            }
-            else
-            {
-                GamePartPeter();
-            }
+            else if (AutosaveCode < 16) { GamePartLilith(); }
+            else if (AutosaveCode == 17 && plotCode < 9) { GameMiddlePart(); }
+            else { GamePartPeter(); }
         }
 
         private void AnswersList_SelectedIndexChanged(object sender, EventArgs e)
@@ -275,6 +274,39 @@ namespace coursework_TCPclient
             }
         }
 
+        private void Coctails_SelectedIndexChanged(Object sender, EventArgs e)
+        {
+            if (Coctails.Enabled)
+            {
+                if (Coctails.SelectedIndex == -1)
+                {
+                    NextReplika.Enabled = false;
+                }
+                else NextReplika.Enabled = true;
+            }
+            else Coctails.SelectedIndex = -1;
+            if (Coctails.SelectedIndex == 0)
+            {
+                MessageBox.Show(recipies[0], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (AutosaveCode < 16) { AutosaveCode = 9; }
+            }
+            if (Coctails.SelectedIndex == 1)
+            {
+                MessageBox.Show(recipies[1], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (AutosaveCode < 16) { AutosaveCode = 15; }
+            }
+            if (Coctails.SelectedIndex == 2)
+            {
+                MessageBox.Show(recipies[2], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (AutosaveCode < 16) { AutosaveCode = 15; }
+            }
+            if (Coctails.SelectedIndex == 3)
+            {
+                MessageBox.Show(recipies[3], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            }
+        }
+
         private void StartGame()
         {
             if (plotCode < 6)
@@ -302,39 +334,6 @@ namespace coursework_TCPclient
             }
         }
 
-        private void Coctails_SelectedIndexChanged(Object sender, EventArgs e)
-        {
-            if (Coctails.Enabled)
-            {
-                if (Coctails.SelectedIndex == -1)
-                {
-                    NextReplika.Enabled = false;
-                }
-                else NextReplika.Enabled = true;
-            }
-            else Coctails.SelectedIndex = -1;
-            if (Coctails.SelectedIndex == 0)
-            {
-                MessageBox.Show(recipies[0], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (AutosaveCode < 17) { AutosaveCode = 9; }
-            }
-            if (Coctails.SelectedIndex == 1)
-            {
-                MessageBox.Show(recipies[1], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (AutosaveCode < 17) { AutosaveCode = 15; }
-            }
-            if (Coctails.SelectedIndex == 2)
-            {
-                MessageBox.Show(recipies[2], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (AutosaveCode < 17) { AutosaveCode = 15; }
-            }
-            if (Coctails.SelectedIndex == 3)
-            {
-                MessageBox.Show(recipies[3], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            }
-        }
-
         private void GamePartLilith()
         {
             Coctails.Enabled = false;
@@ -345,7 +344,7 @@ namespace coursework_TCPclient
             Coctails.SelectedIndex = -1;
             AnswersList.SelectedIndex = -1;
 
-            if (AutosaveCode < 17 && Coctails.Items.Count == 0)
+            if (Coctails.Items.Count == 0)
             {
                 if (recipie)
                 {
@@ -441,16 +440,31 @@ namespace coursework_TCPclient
                     recipies.Add(lilith.Recipies[1]);
                     break;
                 case 11:
-                    AutosaveCode = 17;
+                    AutosaveCode = 16;
                     break;
                 case 12:
                     AutosaveCode = 13;
                     break;
+                case 13:
+                    AutosaveCode = 16;
+                    break;
                 case 14:
+                    AutosaveCode = 16;
                     break;
                 case 15:
                     recipie = false;
+                    AutosaveCode = 16;
                     break;
+            }
+        }
+
+        private void GameMiddlePart()
+        {
+            if (plotCode < 9)
+            {
+                textLines.Text = plot[plotCode];
+                textLines.Update();
+                plotCode++;
             }
         }
 

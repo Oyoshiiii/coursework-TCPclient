@@ -168,9 +168,9 @@
             Lilith lilith = new Lilith();
             Peter peter = new Peter();
 
-            if (autosaveCode > 15)
+            if (autosaveCode > 16)
             {
-                dialog = peter.StoryLines(autosaveCode - 16);
+                dialog = peter.StoryLines(autosaveCode - 17);
             }
             else
             {
