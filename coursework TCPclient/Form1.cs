@@ -26,7 +26,7 @@ namespace coursework_TCPclient
             //картинка бара с лилит
             "lilith.jpg",
             //картинка бара с питером
-            ""
+            "robert.jpg"
         };
         List<string> plot = new List<string>()
         {
