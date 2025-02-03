@@ -41,7 +41,7 @@
             // 
             // NewGameButton
             // 
-            NewGameButton.BackColor = Color.LightBlue;
+            NewGameButton.BackColor = Color.MediumPurple;
             NewGameButton.Location = new Point(321, 131);
             NewGameButton.Name = "NewGameButton";
             NewGameButton.Size = new Size(157, 62);
@@ -52,7 +52,7 @@
             // 
             // ContinueButton
             // 
-            ContinueButton.BackColor = SystemColors.InactiveCaption;
+            ContinueButton.BackColor = Color.MediumOrchid;
             ContinueButton.Location = new Point(321, 220);
             ContinueButton.Name = "ContinueButton";
             ContinueButton.Size = new Size(157, 58);
@@ -63,7 +63,7 @@
             // 
             // textLines
             // 
-            textLines.BackColor = SystemColors.ScrollBar;
+            textLines.BackColor = Color.LightSlateGray;
             textLines.Location = new Point(22, 284);
             textLines.Name = "textLines";
             textLines.Size = new Size(681, 87);
@@ -73,17 +73,17 @@
             // 
             // visual
             // 
-            visual.BackColor = Color.IndianRed;
-            visual.Location = new Point(215, 12);
+            visual.BackColor = Color.Indigo;
+            visual.Location = new Point(229, 12);
             visual.Name = "visual";
-            visual.Size = new Size(559, 266);
+            visual.Size = new Size(512, 266);
             visual.TabIndex = 3;
             visual.TabStop = false;
             visual.Visible = false;
             // 
             // NextReplika
             // 
-            NextReplika.BackColor = Color.IndianRed;
+            NextReplika.BackColor = Color.Orchid;
             NextReplika.Location = new Point(709, 320);
             NextReplika.Name = "NextReplika";
             NextReplika.Size = new Size(79, 83);
@@ -95,7 +95,8 @@
             // 
             // AnswersList
             // 
-            AnswersList.BackColor = Color.DarkGray;
+            AnswersList.BackColor = Color.Indigo;
+            AnswersList.ForeColor = Color.FloralWhite;
             AnswersList.FormattingEnabled = true;
             AnswersList.HorizontalScrollbar = true;
             AnswersList.ItemHeight = 25;
@@ -108,7 +109,7 @@
             // 
             // Coctails
             // 
-            Coctails.BackColor = Color.Salmon;
+            Coctails.BackColor = Color.DarkMagenta;
             Coctails.FormattingEnabled = true;
             Coctails.ItemHeight = 25;
             Coctails.Location = new Point(22, 37);
@@ -121,6 +122,7 @@
             // menuText
             // 
             menuText.AutoSize = true;
+            menuText.ForeColor = SystemColors.ActiveCaption;
             menuText.Location = new Point(22, 9);
             menuText.Name = "menuText";
             menuText.Size = new Size(187, 25);
@@ -132,7 +134,7 @@
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.RosyBrown;
+            BackColor = Color.DarkSlateBlue;
             ClientSize = new Size(800, 450);
             Controls.Add(menuText);
             Controls.Add(Coctails);

@@ -19,10 +19,9 @@ namespace coursework_TCPclient
 
         List<string> coctails = null;
         List<string> recipies = null;
-
-        List<Image> images = new List<Image>()
+        List<string> images = new List<string>
         {
-
+            "bar.jpg"
         };
         List<string> plot = new List<string>()
         {
@@ -47,9 +46,9 @@ namespace coursework_TCPclient
             "Ну, смешно однако...",
             //6 7
             "Хорошо, сейчас сделаем",
-            "Простите, не особо понимаю все равно..",
+            "Простите, не особо понимаю все равно.. может вы еще вспомните пару деталей коктейля?",
             // 8
-            ""
+            "...может.. ещё детали вспомните?..."
         };
 
 
@@ -72,7 +71,7 @@ namespace coursework_TCPclient
         }
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if ((Coctails.Enabled || AnswersList.SelectedIndex != -1) && AutosaveCode != 0)
+            if ((Coctails.Enabled || AnswersList.SelectedIndex != -1) && AutosaveCode != 0 && AutosaveCode != -1)
             {
                 MessageBox.Show("Сначала перейдите к следующей реплике", "Ошибка автосохранения", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -83,29 +82,35 @@ namespace coursework_TCPclient
                 var msg = MessageBox.Show("Вы точно хотите выйти из игры?", "Выход", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (msg == DialogResult.Yes)
                 {
-                    try
+                    if (AutosaveCode == 0 || AutosaveCode == -1)
                     {
-                        TcpClient player = new TcpClient(ip, port);
-                        NetworkStream stream = player.GetStream();
-
-                        if (AutosaveCode < 0) { AutosaveCode *= -1; }
-
-                        string sendCode = $"{AutosaveCode}";
-                        if (recipie)
+                        e.Cancel = false;
+                    }
+                    else
+                    {
+                        try
                         {
-                            sendCode += "00";
+                            TcpClient player = new TcpClient(ip, port);
+                            NetworkStream stream = player.GetStream();
+
+                            if (AutosaveCode < 0) { AutosaveCode *= -1; }
+
+                            string sendCode = $"{AutosaveCode}";
+                            if (recipie)
+                            {
+                                sendCode += "00";
+                            }
+
+                            byte[] data = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
+                            stream.Write(data, 0, data.Length);
+
+                            player.Close();
                         }
-
-                        byte[] data = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
-                        stream.Write(data, 0, data.Length);
-
-                        player.Close();
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Ошибка при закрытии: " + ex.Message);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Ошибка при закрытии: " + ex.Message);
-                    }
-
                 }
                 else { e.Cancel = true; }
             }
@@ -146,6 +151,9 @@ namespace coursework_TCPclient
                     AnswersList.Visible = true;
                     NextReplika.Visible = true;
                     Coctails.Visible = true;
+
+                    visual.Image = Image.FromFile(images[0]);
+                    visual.Update();
 
                     MessageBox.Show("Данная игра создана по задумке игры Va 11 Hall-a\nВы играете от лица барменши, которая" +
                         " только устроилась в бар", "Вступление", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -296,6 +304,7 @@ namespace coursework_TCPclient
                 }
                 else NextReplika.Enabled = true;
             }
+            else Coctails.SelectedIndex = -1;
             if (Coctails.SelectedIndex == 0)
             {
                 MessageBox.Show(recipies[0], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
