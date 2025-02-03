@@ -9,6 +9,7 @@ namespace coursework_TCPclient
     {
         int AutosaveCode = 0;
         bool recipie = false;
+        bool advice = false;
 
         string ip = "127.0.0.1";
         int port = 8888;
@@ -46,7 +47,7 @@ namespace coursework_TCPclient
             "Ну, смешно однако...",
             //6 7
             "Хорошо, сейчас сделаем",
-            "Простите, не особо понимаю все равно.. может вы еще вспомните пару деталей коктейля?",
+            "Простите, может вы еще вспомните пару деталей коктейля?",
             // 8
             "...может.. ещё детали вспомните?..."
         };
@@ -206,10 +207,13 @@ namespace coursework_TCPclient
         private void NextReplika_Click(object sender, EventArgs e)
         {
             if (AutosaveCode == 0) { StartGame(); }
+            else if (AutosaveCode < 17)
+            {
+                GamePartLilith();
+            }
             else
             {
-                AnswersList.SelectedIndex = -1;
-                Game();
+                GamePartPeter();
             }
         }
 
@@ -232,19 +236,21 @@ namespace coursework_TCPclient
                 if (AnswersList.SelectedIndex == 1) { AutosaveCode = 6; }
             }
 
-            if ((AutosaveCode == -5 || AutosaveCode == -6) && AnswersList.Items.Count > 0)
+            if ((AutosaveCode == -5 || AutosaveCode == 7 || AutosaveCode == 9 || AutosaveCode == 15) && AnswersList.Items.Count > 0)
             {
                 if (AnswersList.SelectedIndex == 0)
                 {
                     Coctails.Enabled = true;
                     NextReplika.Enabled = false;
+                    recipie = true;
                     AutosaveCode = -5;
                 }
                 if (AnswersList.SelectedIndex == 1)
                 {
                     Coctails.Enabled = false;
-                    NextReplika.Enabled = true;
                     Coctails.SelectedIndex = -1;
+                    NextReplika.Enabled = true;
+                    recipie = false;
                     AutosaveCode = 7;
                 }
             }
@@ -255,12 +261,14 @@ namespace coursework_TCPclient
                 {
                     Coctails.Enabled = true;
                     NextReplika.Enabled = false;
+                    advice = true;
                     AutosaveCode = -7;
                 }
                 if (AnswersList.SelectedIndex == 1)
                 {
                     Coctails.Enabled = false;
                     NextReplika.Enabled = true;
+                    advice = false;
                     Coctails.SelectedIndex = -1;
                     AutosaveCode = 8;
                 }
@@ -323,10 +331,11 @@ namespace coursework_TCPclient
             if (Coctails.SelectedIndex == 3)
             {
                 MessageBox.Show(recipies[3], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             }
         }
 
-        private void Game()
+        private void GamePartLilith()
         {
             Coctails.Enabled = false;
             AnswersList.Items.Clear();
@@ -349,16 +358,6 @@ namespace coursework_TCPclient
                     Coctails.Update();
                 }
                 Coctails.EndUpdate();
-            }
-
-            if (AutosaveCode < 17)
-            {
-                //картинка игры меняется на картинку с лилит
-            }
-            else
-            {
-                //картинка игры меняется на картинку с питером
-
             }
 
             textLines.Text = GameLine.MainGameLine(AutosaveCode);
@@ -404,7 +403,7 @@ namespace coursework_TCPclient
                     AnswersList.Update();
                     AnswersList.EndUpdate();
 
-                    AutosaveCode = -6;
+                    AutosaveCode = -5;
                     NextReplika.Enabled = false;
                     break;
                 case 7:
@@ -416,10 +415,20 @@ namespace coursework_TCPclient
                     AutosaveCode = -7;
                     NextReplika.Enabled = false;
                     break;
+                case 8:
+                    AnswersList.Items.Add(playerAnswers[6]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -8;
+                    NextReplika.Enabled = false;
+                    break;
                 case 9:
-                    if (recipie)
+                    if (recipie) { AutosaveCode = 10; }
+                    else
                     {
-                        AutosaveCode = 10;
+                        if (advice) { AutosaveCode = 12; }
+                        else { AutosaveCode = 14; }
                     }
                     break;
                 case 10:
@@ -433,9 +442,21 @@ namespace coursework_TCPclient
                     break;
                 case 11:
                     AutosaveCode = 17;
-                    recipie = true;
+                    break;
+                case 12:
+                    AutosaveCode = 13;
+                    break;
+                case 14:
+                    break;
+                case 15:
+                    recipie = false;
                     break;
             }
+        }
+
+        private void GamePartPeter()
+        {
+
         }
     }
 }
