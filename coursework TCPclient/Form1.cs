@@ -200,6 +200,8 @@ namespace coursework_TCPclient
                         NextReplika.Visible = true;
                         Coctails.Visible = true;
 
+                        if (AutosaveCode == 16) { plotCode = 6; }
+                        visual.Image = Image.FromFile(images[0]);
                         textLines.Text = "Нажми на кнопку ->";
                     }
                 }
@@ -523,11 +525,13 @@ namespace coursework_TCPclient
             {
                 textLines.Text = plot[plotCode];
                 textLines.Update();
-                plotCode++;
+                if (plotCode == 8) { AutosaveCode = 17; }
             }
+
+            plotCode++;
         }
 
-        private void GamePartPeter()
+        private void GamePartRobert()
         {
             if (visual.Image != Image.FromFile(images[2]))
             {
