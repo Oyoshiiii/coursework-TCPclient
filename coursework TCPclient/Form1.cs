@@ -44,7 +44,7 @@ namespace coursework_TCPclient
             "Нет",
             //2 3
             "А как обычно - это как?..",
-            "Конечно, как обычно, каждый день такое готовлю",
+            "Конечно, 'как обычно', каждый день такое готовлю",
             //4 5
             "Ничего страшного",
             "Ну, смешно однако...",
@@ -106,7 +106,7 @@ namespace coursework_TCPclient
                                 sendCode += "00";
                             }
 
-                            byte[] data = Encoding.UTF8.GetBytes(AutosaveCode.ToString());
+                            byte[] data = Encoding.UTF8.GetBytes(sendCode);
                             stream.Write(data, 0, data.Length);
 
                             player.Close();
@@ -212,7 +212,7 @@ namespace coursework_TCPclient
         {
             if (AutosaveCode == 0) { StartGame(); }
             else if (AutosaveCode < 16) { GamePartLilith(); }
-            else if (AutosaveCode == 17 && plotCode < 9) { GameMiddlePart(); }
+            else if (AutosaveCode == 16 && plotCode < 9) { GameMiddlePart(); }
             else { GamePartPeter(); }
         }
 
@@ -270,6 +270,15 @@ namespace coursework_TCPclient
                     advice = false;
                     Coctails.SelectedIndex = -1;
                     AutosaveCode = 8;
+                }
+            }
+
+            if (AutosaveCode == -8 && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0)
+                {
+                    Coctails.Enabled = true;
+                    NextReplika.Enabled = false;
                 }
             }
         }
@@ -346,11 +355,6 @@ namespace coursework_TCPclient
 
             if (Coctails.Items.Count == 0)
             {
-                if (recipie)
-                {
-                    coctails.Add(lilith.Coctails[1]);
-                    recipies.Add(lilith.Recipies[1]);
-                }
                 foreach (var coctail in coctails)
                 {
                     Coctails.Items.Add(coctail);
@@ -358,8 +362,48 @@ namespace coursework_TCPclient
                 }
                 Coctails.EndUpdate();
             }
+            if (recipie && Coctails.Items.Count < 4 && AutosaveCode != 15)
+            {
+                coctails.Add(lilith.Coctails[lilith.CoctailGiftNum]);
+                recipies.Add(lilith.Recipies[lilith.CoctailGiftNum]);
+                Coctails.Items.Add(coctails[coctails.Count - 1]);
+                Coctails.Update();
+                Coctails.EndUpdate();
+            }
 
-            textLines.Text = GameLine.MainGameLine(AutosaveCode);
+            switch (AutosaveCode)
+            {
+                case -2:
+                    AutosaveCode = 4;
+                    break;
+                case -3:
+                    AutosaveCode = 4;
+                    break;
+                case -10:
+                    AutosaveCode = 11;
+                    break;
+                case -11:
+                    AutosaveCode = 16;
+                    break;
+                case -12:
+                    AutosaveCode = 13;
+                    break;
+                case -13:
+                    AutosaveCode = 16;
+                    break;
+                case -14:
+                    AutosaveCode = 16;
+                    break;
+                case -15:
+                    AutosaveCode = 16;
+                    break;
+            }
+            
+            if (AutosaveCode < 16)
+            {
+                textLines.Text = GameLine.MainGameLine(AutosaveCode);
+            }
+            else { textLines.Text = plot[plotCode]; plotCode++; }
 
             switch (AutosaveCode)
             {
@@ -373,10 +417,10 @@ namespace coursework_TCPclient
                     NextReplika.Enabled = false;
                     break;
                 case 2:
-                    AutosaveCode = 4;
+                    AutosaveCode = -2;
                     break;
                 case 3:
-                    AutosaveCode = 4;
+                    AutosaveCode = -3;
                     break;
                 case 4:
                     AnswersList.Items.Add(playerAnswers[4]);
@@ -431,29 +475,25 @@ namespace coursework_TCPclient
                     }
                     break;
                 case 10:
-                    AutosaveCode = 11;
-                    Coctails.Items.Add(lilith.Coctails[1]);
-                    Coctails.Update();
-                    Coctails.EndUpdate();
-
-                    coctails.Add(lilith.Coctails[1]);
-                    recipies.Add(lilith.Recipies[1]);
+                    AutosaveCode = -10;
                     break;
                 case 11:
-                    AutosaveCode = 16;
+                    MessageBox.Show($"Добавлен новый напиток: {lilith.Coctails[lilith.CoctailGiftNum]}", $"Подарок от {lilith.Name}", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    AutosaveCode = -11;
                     break;
                 case 12:
-                    AutosaveCode = 13;
+                    AutosaveCode = -12;
                     break;
                 case 13:
-                    AutosaveCode = 16;
+                    AutosaveCode = -13;
                     break;
                 case 14:
-                    AutosaveCode = 16;
+                    AutosaveCode = -14;
                     break;
                 case 15:
                     recipie = false;
-                    AutosaveCode = 16;
+                    AutosaveCode = -15;
                     break;
             }
         }

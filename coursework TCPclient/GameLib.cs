@@ -27,14 +27,14 @@
         public int CoctailGiftNum { get { return coctailGiftNum; }  set { coctailGiftNum = value; } }
         public Lilith() 
         { 
-            Name = "Lilith";
+            Name = "Лилит";
             Coctails = new List<string> { "Розы в снегу", "Белая дымка" };
             Recipies = new List<string> 
             { 
                 "Мята, лед, сироп из роз и клюквы, мусс из белого шоколада", 
                 "Сухой лед, лавандовый сироп" 
             };
-
+            CoctailGiftNum = 1;
             storyLines = new List<string>
             {
                 //приветствие --- 1
@@ -76,7 +76,7 @@
 
                 //Если не было уточнений -> рецепт --- 10
                 //1 - благодарность за заказ
-                "\tВы очень талантливы.. я вам всего ничего сказала, а вы поняли сразу, что это на напиток, хотя работаете тут " +
+                "\tВы очень талантливы.. я вам всего ничего сказала, а вы поняли сразу, что это за напиток, хотя работаете тут " +
                 "недавно.. Крайне признательна вам и буду рада вас видеть снова!",
 
                 //Если не было уточнений -> рецепт --- 11
@@ -112,7 +112,7 @@
         }
         public Peter()
         {
-            Name = "Peter";
+            Name = "Питер";
             Coctails = new List<string> { "Табак и ваниль" };
             Recipies = new List<string> { "Ваниль, табачный сироп, сухой лед, перец" };
 
@@ -170,11 +170,11 @@
 
             if (autosaveCode > 16)
             {
-                dialog = peter.StoryLines(autosaveCode - 17);
+                dialog = peter.Name + ": " + peter.StoryLines(autosaveCode - 17);
             }
             else
             {
-                dialog = lilith.StoryLines(autosaveCode - 1);
+                dialog = lilith.Name + ": " + lilith.StoryLines(autosaveCode - 1);
             }
 
             return dialog; 
