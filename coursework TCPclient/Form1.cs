@@ -9,7 +9,6 @@ namespace coursework_TCPclient
     {
         int AutosaveCode = 0;
         bool recipie = false;
-        bool advice = true;
 
         string ip = "127.0.0.1";
         int port = 8888;
@@ -73,7 +72,7 @@ namespace coursework_TCPclient
         }
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (Coctails.Enabled || AnswersList.SelectedIndex != -1)
+            if ((Coctails.Enabled || AnswersList.SelectedIndex != -1) && AutosaveCode != 0)
             {
                 MessageBox.Show("Сначала перейдите к следующей реплике", "Ошибка автосохранения", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -88,6 +87,8 @@ namespace coursework_TCPclient
                     {
                         TcpClient player = new TcpClient(ip, port);
                         NetworkStream stream = player.GetStream();
+
+                        if (AutosaveCode < 0) { AutosaveCode *= -1; }
 
                         string sendCode = $"{AutosaveCode}";
                         if (recipie)
@@ -247,7 +248,6 @@ namespace coursework_TCPclient
                     Coctails.Enabled = true;
                     NextReplika.Enabled = false;
                     AutosaveCode = -7;
-                    advice = true;
                 }
                 if (AnswersList.SelectedIndex == 1)
                 {
@@ -255,7 +255,6 @@ namespace coursework_TCPclient
                     NextReplika.Enabled = true;
                     Coctails.SelectedIndex = -1;
                     AutosaveCode = 8;
-                    advice = false;
                 }
             }
         }
