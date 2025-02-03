@@ -16,13 +16,17 @@ namespace coursework_TCPclient
         int plotCode = 0;
 
         Lilith lilith = new Lilith();
-        Peter peter = new Peter();
+        Robert robert = new Robert();
 
         List<string> coctails = null;
         List<string> recipies = null;
         List<string> images = new List<string>
         {
-            "bar.jpg"
+            "bar.jpg",
+            //картинка бара с лилит
+            "lilith.jpg",
+            //картинка бара с питером
+            ""
         };
         List<string> plot = new List<string>()
         {
@@ -65,13 +69,13 @@ namespace coursework_TCPclient
             {
                 lilith.Coctails[0],
                 "Кисельные грёзы",
-                peter.Coctails[0]
+                robert.Coctails[0]
             };
             recipies = new List<string>()
             {
                 lilith.Recipies[0],
                 "Альдегид, лаймовый сироп",
-                peter.Recipies[0]
+                robert.Recipies[0]
             };
         }
         private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -345,6 +349,11 @@ namespace coursework_TCPclient
 
         private void GamePartLilith()
         {
+            if (visual.Image != Image.FromFile(images[1]))
+            {
+                visual.Image = Image.FromFile(images[1]);
+            }
+
             Coctails.Enabled = false;
             AnswersList.Items.Clear();
             AnswersList.Update();
@@ -403,7 +412,12 @@ namespace coursework_TCPclient
             {
                 textLines.Text = GameLine.MainGameLine(AutosaveCode);
             }
-            else { textLines.Text = plot[plotCode]; plotCode++; }
+            else
+            {
+                visual.Image = Image.FromFile(images[0]);
+                textLines.Text = plot[plotCode]; 
+                plotCode++;
+            }
 
             switch (AutosaveCode)
             {
@@ -500,6 +514,11 @@ namespace coursework_TCPclient
 
         private void GameMiddlePart()
         {
+            if (visual.Image != Image.FromFile(images[0]))
+            {
+                visual.Image = Image.FromFile(images[0]);
+            }
+
             if (plotCode < 9)
             {
                 textLines.Text = plot[plotCode];
@@ -510,7 +529,34 @@ namespace coursework_TCPclient
 
         private void GamePartPeter()
         {
+            if (visual.Image != Image.FromFile(images[2]))
+            {
+                visual.Image = Image.FromFile(images[2]);
+            }
+            Coctails.Enabled = false;
+            AnswersList.Items.Clear();
+            AnswersList.Update();
+            AnswersList.EndUpdate();
 
+            Coctails.SelectedIndex = -1;
+            AnswersList.SelectedIndex = -1;
+
+            if (Coctails.Items.Count == 0)
+            {
+                if (recipie)
+                {
+                    coctails.Add(lilith.Coctails[lilith.CoctailGiftNum]);
+                    recipies.Add(lilith.Recipies[lilith.CoctailGiftNum]);
+                }
+                foreach (var coctail in coctails)
+                {
+                    Coctails.Items.Add(coctail);
+                    Coctails.Update();
+                }
+                Coctails.EndUpdate();
+            }
+
+            textLines.Text = GameLine.MainGameLine(AutosaveCode);
         }
     }
 }
