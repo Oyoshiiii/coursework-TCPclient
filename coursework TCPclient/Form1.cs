@@ -20,6 +20,7 @@ namespace coursework_TCPclient
 
         List<string> coctails = null;
         List<string> recipies = null;
+
         List<string> images = new List<string>
         {
             "bar.jpg",
@@ -38,11 +39,12 @@ namespace coursework_TCPclient
             "* к барной стойке подошла высокая девушка, которая попутно закрывала свой зонтик *",
             "* девушка ушла и вы смогли какое-то время побыть наедине с самой собой *",
             "...",
-            "* спустя двадцать минут в бар зашел промокший от дождя парень, который был явно не в духе *"
+            "* спустя двадцать минут в бар зашел промокший от дождя парень, который был явно не в духе *",
+            "* парень забрал заказ и ушел *"
         };
-
         List<string> playerAnswers = new List<string>()
         {
+            //часть игры с Лилит
             //0 1
             "Да",
             "Нет",
@@ -56,11 +58,16 @@ namespace coursework_TCPclient
             "Хорошо, сейчас сделаем",
             "Простите, может вы еще вспомните пару деталей коктейля?",
             // 8
-            "...может.. ещё детали вспомните?..."
+            "...может.. ещё детали вспомните?...",
             
+            //часть игры с Робертом
+            //9 10
+            "Извините?. Я хоть и пару дней тут, но ничем не хуже Джилл или Джона",
+            "Не переживайте, я приготовлю все в лучшем виде",
+            //11 12
+            "Пару минут",
+            "Серьёзно? Тут каждый второй напиток на любителя..."
         };
-
-
 
         public Form1()
         {
@@ -189,7 +196,7 @@ namespace coursework_TCPclient
                         int HasGift = lastCode / 100;
                         if (HasGift != 0) { recipie = true; lastCode /= 100; }
                         AutosaveCode = lastCode;
-
+                        plotCode = 6;
                         NewGameButton.Hide();
                         ContinueButton.Hide();
 
@@ -217,9 +224,10 @@ namespace coursework_TCPclient
         private void NextReplika_Click(object sender, EventArgs e)
         {
             if (AutosaveCode == 0) { StartGame(); }
-            else if (AutosaveCode < 16) { GamePartLilith(); }
+            else if (AutosaveCode < 16 && AutosaveCode > -17) { GamePartLilith(); }
             else if (AutosaveCode == 16 && plotCode < 9) { GameMiddlePart(); }
-            else { GamePartPeter(); }
+            else if (AutosaveCode < 30) { GamePartRobert(); }
+            else { EndGame(); }
         }
 
         private void AnswersList_SelectedIndexChanged(object sender, EventArgs e)
@@ -287,6 +295,49 @@ namespace coursework_TCPclient
                     NextReplika.Enabled = false;
                 }
             }
+
+            if (AutosaveCode == -17 && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0)
+                {
+                    AutosaveCode = 18;
+                    NextReplika.Enabled = true;
+                }
+                if (AnswersList.SelectedIndex == 1)
+                {
+                    AutosaveCode = 19;
+                    NextReplika.Enabled = true;
+                }
+            }
+
+            if ((AutosaveCode == -21 || AutosaveCode == 26 || AutosaveCode == 23 || AutosaveCode == 27 || AutosaveCode == 22) && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0)
+                {
+                    Coctails.Enabled = true;
+                    NextReplika.Enabled = false;
+                    advice = true;
+                    AutosaveCode = -21;
+                }
+                if (AnswersList.SelectedIndex == 1)
+                {
+                    Coctails.Enabled = false;
+                    NextReplika.Enabled = true;
+                    advice = false;
+                    Coctails.SelectedIndex = -1;
+                    AutosaveCode = 22;
+                }
+            }
+
+            if (AutosaveCode == -22 && AnswersList.Items.Count > 0)
+            {
+                if (AnswersList.SelectedIndex == 0)
+                {
+                    Coctails.Enabled = true;
+                    NextReplika.Enabled = false;
+                    AutosaveCode = -22;
+                }
+            }
         }
 
         private void Coctails_SelectedIndexChanged(Object sender, EventArgs e)
@@ -303,22 +354,29 @@ namespace coursework_TCPclient
             if (Coctails.SelectedIndex == 0)
             {
                 MessageBox.Show(recipies[0], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (AutosaveCode < 16) { AutosaveCode = 9; }
+                if (AutosaveCode < 16 && AutosaveCode > -16) { AutosaveCode = 9; }
+                else { AutosaveCode = 26;}
             }
             if (Coctails.SelectedIndex == 1)
             {
                 MessageBox.Show(recipies[1], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (AutosaveCode < 16) { AutosaveCode = 15; }
+                if (AutosaveCode < 16 && AutosaveCode > -16) { AutosaveCode = 15; }
+                else { AutosaveCode = 26; }
             }
             if (Coctails.SelectedIndex == 2)
             {
                 MessageBox.Show(recipies[2], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                if (AutosaveCode < 16) { AutosaveCode = 15; }
+                if (AutosaveCode < 16 && AutosaveCode > -16) { AutosaveCode = 15; }
+                else
+                {
+                    if (advice) { AutosaveCode = 23; }
+                    else { AutosaveCode = 25;}
+                }
             }
             if (Coctails.SelectedIndex == 3)
             {
                 MessageBox.Show(recipies[3], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                AutosaveCode = 27;
             }
         }
 
@@ -521,6 +579,8 @@ namespace coursework_TCPclient
                 visual.Image = Image.FromFile(images[0]);
             }
 
+            if (advice) { advice = false; }
+
             if (plotCode < 9)
             {
                 textLines.Text = plot[plotCode];
@@ -533,10 +593,11 @@ namespace coursework_TCPclient
 
         private void GamePartRobert()
         {
-            if (visual.Image != Image.FromFile(images[2]))
+            if (visual.Image != Image.FromFile(images[2]) && AutosaveCode < 28 && AutosaveCode > 0)
             {
                 visual.Image = Image.FromFile(images[2]);
             }
+
             Coctails.Enabled = false;
             AnswersList.Items.Clear();
             AnswersList.Update();
@@ -560,7 +621,124 @@ namespace coursework_TCPclient
                 Coctails.EndUpdate();
             }
 
-            textLines.Text = GameLine.MainGameLine(AutosaveCode);
+            switch (AutosaveCode)
+            {
+                case -18:
+                    AutosaveCode = 20;
+                    break;
+                case -19:
+                    AutosaveCode = 20;
+                    break;
+                case -20:
+                    AutosaveCode = 21;
+                    break;
+                case -23:
+                    AutosaveCode = 24;
+                    break;
+                case -24:
+                    AutosaveCode = 28;
+                    break;
+                case -25:
+                    AutosaveCode = 28;
+                    break;
+                case -26:
+                    AutosaveCode = 28;
+                    break;
+                case -27:
+                    AutosaveCode = 28;
+                    break;
+                case -28:
+                    AutosaveCode = 30;
+                    textLines.Text = "...";
+                    break;
+            }
+
+            if (AutosaveCode < 28) { textLines.Text = GameLine.MainGameLine(AutosaveCode); }
+
+            switch (AutosaveCode)
+            {
+                case 17:
+                    AnswersList.Items.Add(playerAnswers[9]);
+                    AnswersList.Items.Add(playerAnswers[10]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -17;
+                    NextReplika.Enabled = false;
+                    break;
+                case 18:
+                    AutosaveCode = -18;
+                    break;
+                case 19:
+                    AutosaveCode = -19;
+                    break;
+                case 20:
+                    AutosaveCode = -20;
+                    break;
+                case 21:
+                    AnswersList.Items.Add(playerAnswers[11]);
+                    AnswersList.Items.Add(playerAnswers[12]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -21;
+                    NextReplika.Enabled = false;
+                    break;
+                case 22:
+                    AnswersList.Items.Add(playerAnswers[11]);
+                    AnswersList.Update();
+                    AnswersList.EndUpdate();
+
+                    AutosaveCode = -22;
+                    NextReplika.Enabled = false;
+                    break;
+                case 23:
+                    AutosaveCode = -23;
+                    break;
+                case 24:
+                    AutosaveCode = -24;
+                    break;
+                case 25:
+                    AutosaveCode = -25;
+                    break;
+                case 26:
+                    AutosaveCode = -26;
+                    break;
+                case 27:
+                    AutosaveCode = -27;
+                    break;
+                case 28:
+                    visual.Image = Image.FromFile(images[0]);
+                    textLines.Text = plot[plot.Count - 1];
+                    AutosaveCode = -28;
+                    break;
+            }
+        }
+    
+        private void EndGame()
+        {
+            NewGameButton.Visible = true;
+            ContinueButton.Visible = true;
+
+            menuText.Hide();
+            visual.Hide();
+            textLines.Hide();
+            AnswersList.Hide();
+            NextReplika.Hide();
+            Coctails.Hide();
+
+            MessageBox.Show("Спасибо за прохождение этой короткой визуальной новеллы, " +
+                "основанной на игре Va 11 Hall-a!", "Конец", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            var answ = MessageBox.Show("Вам понравилось?", "???", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            
+            if(answ == DialogResult.Yes)
+            {
+                MessageBox.Show("(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
+            }
+            else { MessageBox.Show("(╯︵╰,)"); }
+
+            AutosaveCode = 0;
         }
     }
 }
