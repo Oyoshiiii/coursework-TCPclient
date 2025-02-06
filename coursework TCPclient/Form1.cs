@@ -130,18 +130,18 @@ namespace coursework_TCPclient
                 }
                 else { e.Cancel = true; }
             }
-        }
+        } //обработчик закрытия игры
         private void NewGameButton_Click(object sender, EventArgs e)
         {
             AutosaveCode = 0;
             SendCodeToServerAsync();
-        }
+        } //обработчик кнопки Новая игра
 
         private void ContinueButton_Click(object sender, EventArgs e)
         {
             AutosaveCode = -1;
             SendCodeToServerAsync();
-        }
+        }    //обработчик кнопки Продолжить
 
         private void SendCodeToServerAsync()
         {
@@ -219,7 +219,7 @@ namespace coursework_TCPclient
             {
                 MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
+        }  //отправка кода на сервер
 
         private void NextReplika_Click(object sender, EventArgs e)
         {
@@ -228,7 +228,7 @@ namespace coursework_TCPclient
             else if (AutosaveCode == 16 && plotCode < 9) { GameMiddlePart(); }
             else if (AutosaveCode < 30) { GamePartRobert(); }
             else { EndGame(); }
-        }
+        } //обработчик кнопки перехода на следующую реплику
 
         private void AnswersList_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -338,8 +338,8 @@ namespace coursework_TCPclient
                     AutosaveCode = -22;
                 }
             }
-        }
-
+        } //обработчик изменения выбранных элементов листа ответов
+        //методы игры и обработчик изменения выбранных элементов в списке напитков
         private void Coctails_SelectedIndexChanged(Object sender, EventArgs e)
         {
             if (Coctails.Enabled)
@@ -378,7 +378,7 @@ namespace coursework_TCPclient
                 MessageBox.Show(recipies[3], "Описание коктейля", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 AutosaveCode = 27;
             }
-        }
+        } 
 
         private void StartGame()
         {
